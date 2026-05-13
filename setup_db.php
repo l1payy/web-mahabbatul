@@ -16,9 +16,12 @@ try {
         CREATE TABLE IF NOT EXISTS siswa ( 
             id INT AUTO_INCREMENT PRIMARY KEY, 
             nama VARCHAR(100), 
-            nis VARCHAR(20) UNIQUE, 
+            nisn VARCHAR(20) UNIQUE, 
+            tanggal_lahir DATE,
+            alamat TEXT,
+            nama_orang_tua VARCHAR(100),
             jenis_kelamin ENUM('Laki-laki', 'Perempuan'), 
-            kelas VARCHAR(20), 
+            foto VARCHAR(255) DEFAULT 'assets/orang.png',
             status ENUM('aktif', 'tidak_aktif') DEFAULT 'aktif', 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
         ); 
@@ -29,7 +32,7 @@ try {
             tanggal DATE, 
             kehadiran ENUM('Hadir', 'Sakit', 'Izin', 'Alpa'), 
             created_by INT, 
-            FOREIGN KEY (siswa_id) REFERENCES siswa(id), 
+            FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE, 
             FOREIGN KEY (created_by) REFERENCES users(id) 
         ); 
 
@@ -39,7 +42,7 @@ try {
             status ENUM('Belum Hafal', 'Masih Menghafal', 'Sudah Lancar'), 
             updated_by INT, 
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-            FOREIGN KEY (siswa_id) REFERENCES siswa(id), 
+            FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE, 
             FOREIGN KEY (updated_by) REFERENCES users(id) 
         ); 
     ");
@@ -48,24 +51,19 @@ try {
     $password = password_hash('password123', PASSWORD_DEFAULT);
     
     $stmt = $pdo->prepare("INSERT IGNORE INTO users (nama, email, password, role) VALUES (?, ?, ?, ?)");
-    $stmt->execute(['Admin Guru', 'guru@alfalah.com', $password, 'admin_guru']);
-    $stmt->execute(['Kepala Sekolah', 'kepala@alfalah.com', $password, 'kepala_sekolah']);
+    $stmt->execute(['Admin Guru', 'guru@mahabbatulummi.com', $password, 'admin_guru']);
+    $stmt->execute(['Kepala Sekolah', 'kepala@mahabbatulummi.com', $password, 'kepala_sekolah']);
 
     // 3. Seed Siswa
     $siswaData = [
-        ['Ahmad Zulkarnain', '20231001', 'Laki-laki', '9A - Tahfidz'],
-        ['Fatimah Az-Zahra', '20231002', 'Perempuan', '8C - Ikhwan'],
-        ['Muhammad Rizky', '20231003', 'Laki-laki', '7B - Reguler'],
-        ['Siti Aminah', '20231004', 'Perempuan', '9A - Tahfidz'],
-        ['Umar bin Khattab', '20231005', 'Laki-laki', '8A - Tahfidz'],
-        ['Ahmad Al-Ghifari', '20231006', 'Laki-laki', '7-A'],
-        ['Fatimah Nurul Huda', '20231007', 'Perempuan', '7-A'],
-        ['Muhammad Zulkifli', '20231008', 'Laki-laki', '7-A'],
-        ['Siti Khadijah', '20231009', 'Perempuan', '7-A'],
-        ['Yahya Al-Fatih', '20231010', 'Laki-laki', '7-A'],
+        ['Ahmad Zulkarnain', '0123456789', '2018-05-15', 'Jl. Merdeka No. 1', 'Budi Santoso', 'Laki-laki'],
+        ['Fatimah Az-Zahra', '0123456790', '2018-08-20', 'Jl. Mawar No. 12', 'Siti Aminah', 'Perempuan'],
+        ['Muhammad Rizky', '0123456791', '2019-01-10', 'Jl. Melati No. 5', 'Agus Prayogo', 'Laki-laki'],
+        ['Siti Aminah', '0123456792', '2018-12-05', 'Jl. Kenanga No. 3', 'Hasan Basri', 'Perempuan'],
+        ['Umar bin Khattab', '0123456793', '2019-03-25', 'Jl. Anggrek No. 8', 'Ali Imran', 'Laki-laki'],
     ];
 
-    $stmt = $pdo->prepare("INSERT IGNORE INTO siswa (nama, nis, jenis_kelamin, kelas) VALUES (?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT IGNORE INTO siswa (nama, nisn, tanggal_lahir, alamat, nama_orang_tua, jenis_kelamin) VALUES (?, ?, ?, ?, ?, ?)");
     foreach ($siswaData as $s) {
         $stmt->execute($s);
     }

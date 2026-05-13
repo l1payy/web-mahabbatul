@@ -12,19 +12,16 @@ $tuntasHafalan = $pdo->query("SELECT COUNT(*) FROM hafalan WHERE status = 'Sudah
 
 // Filters
 $search = $_GET['search'] ?? '';
-$kelas_filter = $_GET['kelas'] ?? '';
-
-// Fetch distinct classes for dropdown
-$classes = $pdo->query("SELECT DISTINCT kelas FROM siswa ORDER BY kelas ASC")->fetchAll(PDO::FETCH_COLUMN);
+$tanggal_filter = $_GET['tanggal'] ?? date('Y-m-d');
 
 // Handle Save Absensi
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'admin_guru') {
-    $tanggal = date('Y-m-d');
+    $tanggal_simpan = $_POST['tanggal_absensi'] ?? date('Y-m-d');
     foreach ($_POST['kehadiran'] as $siswa_id => $status) {
-        // Check if already exists for today
+        // Check if already exists for the selected date
         $stmt = $pdo->prepare("SELECT id FROM absensi WHERE siswa_id = ? AND tanggal = ?");
-        $stmt->execute([$siswa_id, $tanggal]);
+        $stmt->execute([$siswa_id, $tanggal_simpan]);
         $existing = $stmt->fetch();
 
         if ($existing) {
@@ -32,28 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'admin_guru')
             $stmt->execute([$status, $_SESSION['user_id'], $existing['id']]);
         } else {
             $stmt = $pdo->prepare("INSERT INTO absensi (siswa_id, tanggal, kehadiran, created_by) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$siswa_id, $tanggal, $status, $_SESSION['user_id']]);
+            $stmt->execute([$siswa_id, $tanggal_simpan, $status, $_SESSION['user_id']]);
         }
     }
     $message = 'Absensi berhasil disimpan!';
 }
 
-// Fetch Students with Today's Attendance
+// Fetch Students with Selected Date's Attendance
 $query = "
     SELECT s.*, a.kehadiran 
     FROM siswa s 
-    LEFT JOIN absensi a ON s.id = a.siswa_id AND a.tanggal = CURDATE()
+    LEFT JOIN absensi a ON s.id = a.siswa_id AND a.tanggal = ?
     WHERE 1=1
 ";
-$params = [];
+$params = [$tanggal_filter];
 
 if ($search) {
     $query .= " AND s.nama LIKE ?";
     $params[] = "%$search%";
-}
-if ($kelas_filter) {
-    $query .= " AND s.kelas = ?";
-    $params[] = $kelas_filter;
 }
 
 $stmt = $pdo->prepare($query);
@@ -70,10 +63,14 @@ require_once 'includes/sidebar.php';
         <p>Kelola kehadiran harian santri secara tertib dan amanah.</p>
     </div>
     <div class="header-actions">
-        <div class="btn btn-outline">
-            <i data-lucide="calendar"></i>
-            <span><?php echo date('l, d F Y'); ?></span>
-        </div>
+        <form action="" method="GET" class="btn btn-outline" style="padding: 0; border: none;">
+            <div class="input-group" style="margin: 0;">
+                <i data-lucide="calendar" style="left: 10px;"></i>
+                <input type="date" name="tanggal" value="<?php echo $tanggal_filter; ?>" onchange="this.form.submit()" style="padding: 8px 12px 8px 36px; min-width: 180px; border: 1px solid var(--border-color); border-radius: 8px;">
+            </div>
+            <!-- Keep other filters in the URL when changing date -->
+            <?php if($search): ?><input type="hidden" name="search" value="<?php echo htmlspecialchars($search); ?>"><?php endif; ?>
+        </form>
         <?php if ($_SESSION['role'] === 'admin_guru'): ?>
             <button type="submit" form="absensiForm" class="btn btn-primary">
                 <i data-lucide="save"></i>
@@ -126,16 +123,6 @@ require_once 'includes/sidebar.php';
                 <i data-lucide="search"></i>
                 <input type="text" name="search" placeholder="Cari Nama Siswa..." value="<?php echo htmlspecialchars($search); ?>">
             </div>
-            <div class="input-group">
-                <select name="kelas" onchange="this.form.submit()">
-                    <option value="">Semua Kelas</option>
-                    <?php foreach ($classes as $c): ?>
-                        <option value="<?php echo $c; ?>" <?php echo ($kelas_filter == $c) ? 'selected' : ''; ?>>
-                            <?php echo $c; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
         </form>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
             Menampilkan <?php echo count($siswaList); ?> dari <?php echo $totalSiswa; ?> Siswa
@@ -143,11 +130,12 @@ require_once 'includes/sidebar.php';
     </div>
 
     <form id="absensiForm" action="" method="POST">
+        <input type="hidden" name="tanggal_absensi" value="<?php echo $tanggal_filter; ?>">
         <table class="table">
             <thead>
                 <tr>
                     <th>Nama Siswa</th>
-                    <th>Kelas</th>
+                    <th>NISN</th>
                     <th>Kehadiran</th>
                 </tr>
             </thead>
@@ -156,17 +144,13 @@ require_once 'includes/sidebar.php';
                 <tr>
                     <td>
                         <div class="student-info">
-                            <div class="avatar">
-                                <?php 
-                                    $names = explode(' ', $siswa['nama']);
-                                    $initials = strtoupper(substr($names[0], 0, 1) . (isset($names[1]) ? substr($names[1], 0, 1) : ''));
-                                    echo $initials;
-                                ?>
+                            <div class="avatar" style="background: transparent;">
+                                <img src="<?php echo htmlspecialchars($siswa['foto'] ?? 'assets/orang.png'); ?>" alt="Foto" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                             </div>
                             <span><?php echo htmlspecialchars($siswa['nama']); ?></span>
                         </div>
                     </td>
-                    <td><?php echo htmlspecialchars($siswa['kelas']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['nisn']); ?></td>
                     <td>
                         <div class="input-group">
                             <select name="kehadiran[<?php echo $siswa['id']; ?>]" 

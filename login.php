@@ -4,7 +4,7 @@ session_start();
 
 // If already logged in, redirect to beranda
 if (isset($_SESSION['user_id'])) {
-    header("Location: beranda.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['nama'] = $user['nama'];
             $_SESSION['role'] = $user['role'];
-            header("Location: beranda.php");
+            header("Location: index.php");
             exit();
         } else {
             $error = 'Email atau password salah!';
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Al-Falah System</title>
+    <title>Login - Mahabbatul Ummi</title>
     <link rel="stylesheet" href="assets/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="login-container">
     <div class="login-box">
         <div class="login-header">
-            <div class="logo-icon" style="background: var(--primary-color); color: white; display: inline-flex; padding: 12px; border-radius: 12px;">
-                <i data-lucide="graduation-cap" size="32"></i>
+            <div class="logo-img" style="margin-bottom: 16px;">
+                <img src="assets/logo.png" alt="Mahabbatul Ummi Logo" style="height: 80px; width: auto;">
             </div>
-            <h2>Al-Falah System</h2>
+            <h2>Mahabbatul Ummi</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">Silakan masuk ke akun Anda</p>
         </div>
 
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form action="" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="admin@alfalah.com" required>
+                <input type="email" id="email" name="email" placeholder="admin@mahabbatulummi.com" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>

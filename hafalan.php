@@ -12,10 +12,7 @@ $tuntasHafalan = $pdo->query("SELECT COUNT(*) FROM hafalan WHERE status = 'Sudah
 
 // Filters
 $search = $_GET['search'] ?? '';
-$kelas_filter = $_GET['kelas'] ?? '';
-
-// Fetch distinct classes
-$classes = $pdo->query("SELECT DISTINCT kelas FROM siswa ORDER BY kelas ASC")->fetchAll(PDO::FETCH_COLUMN);
+$status_filter = $_GET['status'] ?? '';
 
 // Handle Save Hafalan
 $message = '';
@@ -47,13 +44,17 @@ $query = "
 $params = [];
 
 if ($search) {
-    $query .= " AND (s.nama LIKE ? OR s.nis LIKE ?)";
+    $query .= " AND (s.nama LIKE ? OR s.nisn LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
-if ($kelas_filter) {
-    $query .= " AND s.kelas = ?";
-    $params[] = $kelas_filter;
+if ($status_filter) {
+    if ($status_filter == 'Belum Hafal') {
+        $query .= " AND (h.status = ? OR h.status IS NULL)";
+    } else {
+        $query .= " AND h.status = ?";
+    }
+    $params[] = $status_filter;
 }
 
 $stmt = $pdo->prepare($query);
@@ -121,19 +122,17 @@ require_once 'includes/sidebar.php';
 
 <div class="data-card">
     <div class="table-controls">
-        <form action="" method="GET" class="search-filter">
-            <div class="input-group">
+        <form action="" method="GET" class="search-filter" style="width: 100%; display: flex; gap: 12px; flex-wrap: wrap;">
+            <div class="input-group" style="flex: 1; min-width: 200px;">
                 <i data-lucide="search"></i>
-                <input type="text" name="search" placeholder="Cari Nama Siswa..." value="<?php echo htmlspecialchars($search); ?>">
+                <input type="text" name="search" placeholder="Cari Nama/NISN..." value="<?php echo htmlspecialchars($search); ?>" style="width: 100%;">
             </div>
-            <div class="input-group">
-                <select name="kelas">
-                    <option value="">Semua Kelas</option>
-                    <?php foreach ($classes as $c): ?>
-                        <option value="<?php echo $c; ?>" <?php echo ($kelas_filter == $c) ? 'selected' : ''; ?>>
-                            <?php echo $c; ?>
-                        </option>
-                    <?php endforeach; ?>
+            <div class="input-group" style="min-width: 180px;">
+                <select name="status" style="width: 100%; padding-left: 12px;">
+                    <option value="">Semua Status</option>
+                    <option value="Belum Hafal" <?php echo ($status_filter == 'Belum Hafal') ? 'selected' : ''; ?>>Belum Hafal</option>
+                    <option value="Masih Menghafal" <?php echo ($status_filter == 'Masih Menghafal') ? 'selected' : ''; ?>>Masih Menghafal</option>
+                    <option value="Sudah Lancar" <?php echo ($status_filter == 'Sudah Lancar') ? 'selected' : ''; ?>>Sudah Lancar</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">
@@ -148,7 +147,7 @@ require_once 'includes/sidebar.php';
             <thead>
                 <tr>
                     <th>Nama Siswa</th>
-                    <th>Kelas</th>
+                    <th>NISN</th>
                     <th>Status Hafalan</th>
                 </tr>
             </thead>
@@ -156,12 +155,14 @@ require_once 'includes/sidebar.php';
                 <?php foreach ($siswaList as $siswa): ?>
                 <tr>
                     <td>
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-weight: 600;"><?php echo htmlspecialchars($siswa['nama']); ?></span>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">NIS: <?php echo htmlspecialchars($siswa['nis']); ?></span>
+                        <div class="student-info">
+                            <div class="avatar" style="background: transparent;">
+                                <img src="<?php echo htmlspecialchars($siswa['foto'] ?? 'assets/orang.png'); ?>" alt="Foto" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            </div>
+                            <span><?php echo htmlspecialchars($siswa['nama']); ?></span>
                         </div>
                     </td>
-                    <td><?php echo htmlspecialchars($siswa['kelas']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['nisn']); ?></td>
                     <td>
                         <div class="input-group">
                             <select name="status_hafalan[<?php echo $siswa['id']; ?>]" 

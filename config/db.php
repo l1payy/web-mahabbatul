@@ -16,10 +16,10 @@ try {
      $pdo = new PDO($dsn, $user, $pass, $options);
      
      // Create database if it doesn't exist
-     $pdo->exec("CREATE DATABASE IF NOT EXISTS al_falah");
+     $pdo->exec("CREATE DATABASE IF NOT EXISTS mahabbatul_ummi");
      
      // Now switch to the database
-     $pdo->exec("USE al_falah");
+     $pdo->exec("USE mahabbatul_ummi");
      
 } catch (\PDOException $e) {
      die("Connection failed: " . $e->getMessage());

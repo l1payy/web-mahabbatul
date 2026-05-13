@@ -3,7 +3,7 @@ require_once 'includes/auth.php';
 require_once 'config/db.php';
 
 $page_title = 'Beranda';
-$current_page = 'beranda.php';
+$current_page = 'index.php';
 
 // Pagination setup
 $limit = 5;
@@ -36,16 +36,16 @@ require_once 'includes/sidebar.php';
 
 <header class="page-header">
     <div class="header-title">
-        <h2>Selamat datang di Sistem Pelaporan Data Siswa Al-Falah</h2>
+        <h2>Selamat datang di Sistem Pelaporan Data Siswa Mahabbatul Ummi</h2>
         <p>Ringkasan informasi data sekolah hari ini.</p>
     </div>
-    <div class="header-actions">
-        <div class="btn btn-outline">
-            <i data-lucide="calendar"></i>
-            <span><?php echo date('l, d F Y'); ?></span>
-        </div>
-    </div>
 </header>
+
+<?php if (isset($_GET['success'])): ?>
+    <div class="message-alert" style="background: var(--success-bg); color: var(--success-text); padding: 12px 24px; border-radius: 8px; margin-bottom: 24px; font-weight: 600;">
+        <?php echo htmlspecialchars($_GET['success']); ?>
+    </div>
+<?php endif; ?>
 
 <div class="stats-container">
     <div class="stat-card">
@@ -81,10 +81,10 @@ require_once 'includes/sidebar.php';
     <div class="card-header">
         <h3>Data Siswa</h3>
         <?php if ($_SESSION['role'] === 'admin_guru'): ?>
-            <button class="btn btn-primary">
+            <a href="tambah_siswa.php" class="btn btn-primary">
                 <i data-lucide="plus"></i>
                 <span>Tambah Siswa</span>
-            </button>
+            </a>
         <?php endif; ?>
     </div>
     
@@ -93,28 +93,34 @@ require_once 'includes/sidebar.php';
             <thead>
                 <tr>
                     <th>Nama Siswa</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Kelas</th>
+                    <th>NISN</th>
+                    <th>Umur</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Alamat</th>
+                    <th>Orang Tua/Wali</th>
                     <th>Status Hafalan</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($siswaList as $siswa): ?>
+                <?php foreach ($siswaList as $siswa): 
+                    $birthDate = new DateTime($siswa['tanggal_lahir']);
+                    $today = new DateTime('today');
+                    $age = $birthDate->diff($today)->y;
+                ?>
                 <tr>
                     <td>
                         <div class="student-info">
-                            <div class="avatar">
-                                <?php 
-                                    $names = explode(' ', $siswa['nama']);
-                                    $initials = strtoupper(substr($names[0], 0, 1) . (isset($names[1]) ? substr($names[1], 0, 1) : ''));
-                                    echo $initials;
-                                ?>
+                            <div class="avatar" style="background: transparent;">
+                                <img src="<?php echo htmlspecialchars($siswa['foto'] ?? 'assets/orang.png'); ?>" alt="Foto" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                             </div>
                             <span><?php echo htmlspecialchars($siswa['nama']); ?></span>
                         </div>
                     </td>
-                    <td><?php echo htmlspecialchars($siswa['jenis_kelamin']); ?></td>
-                    <td><?php echo htmlspecialchars($siswa['kelas']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['nisn']); ?></td>
+                    <td><?php echo $age; ?> Tahun</td>
+                    <td><?php echo date('d/m/Y', strtotime($siswa['tanggal_lahir'])); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['alamat']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['nama_orang_tua']); ?></td>
                     <td>
                         <?php 
                         $status = $siswa['status_hafalan'] ?? 'Belum Hafal';
