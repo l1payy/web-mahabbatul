@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-box">
         <div class="login-header">
             <div class="logo-img" style="margin-bottom: 16px;">
-                <img src="assets/logo.png" alt="Mahabbatul Ummi Logo" style="height: 80px; width: auto;">
+                <img src="assets/logo.png" alt="Mahabbatul Ummi Logo" style="height: 100px; width: 100px;">
             </div>
             <h2>Mahabbatul Ummi</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">Silakan masuk ke akun Anda</p>
@@ -62,15 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form action="" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="admin@mahabbatulummi.com" required>
+                <input type="email" id="email" name="email" placeholder="masukan email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">
-                <span>Masuk Sekarang</span>
-                <i data-lucide="arrow-right" size="18"></i>
+                <span>Login</span>
             </button>
         </form>
     </div>

@@ -12,14 +12,13 @@ $offset = ($page - 1) * $limit;
 
 // Stats
 $totalSiswa = $pdo->query("SELECT COUNT(*) FROM siswa")->fetchColumn();
-$totalGuru = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin_guru'")->fetchColumn();
 $tuntasHafalan = $pdo->query("SELECT COUNT(*) FROM hafalan WHERE status = 'Sudah Lancar'")->fetchColumn();
 
 // Fetch Data Siswa with Hafalan Status
 $stmt = $pdo->prepare("
-    SELECT s.*, h.status as status_hafalan 
-    FROM siswa s 
-    LEFT JOIN hafalan h ON s.id = h.siswa_id 
+    SELECT s.*, h.status as status_hafalan
+    FROM siswa s
+    LEFT JOIN hafalan h ON s.id = h.siswa_id
     LIMIT :limit OFFSET :offset
 ");
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -37,13 +36,19 @@ require_once 'includes/sidebar.php';
 <header class="page-header">
     <div class="header-title">
         <h2>Selamat datang di Sistem Pelaporan Data Siswa Mahabbatul Ummi</h2>
-        <p>Ringkasan informasi data sekolah hari ini.</p>
+        <p>Ringkasan informasi data sekolah Mahabbatul Ummi.</p>
     </div>
 </header>
 
 <?php if (isset($_GET['success'])): ?>
     <div class="message-alert" style="background: var(--success-bg); color: var(--success-text); padding: 12px 24px; border-radius: 8px; margin-bottom: 24px; font-weight: 600;">
         <?php echo htmlspecialchars($_GET['success']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error'])): ?>
+    <div class="message-alert" style="background: var(--error-bg); color: var(--error-text); padding: 12px 24px; border-radius: 8px; margin-bottom: 24px; font-weight: 600;">
+        <?php echo htmlspecialchars($_GET['error']); ?>
     </div>
 <?php endif; ?>
 
@@ -60,7 +65,7 @@ require_once 'includes/sidebar.php';
     <div class="stat-card">
         <div class="stat-info">
             <p>Total Guru</p>
-            <h3><?php echo number_format($totalGuru, 0, ',', '.'); ?></h3>
+            <h3>3</h3>
         </div>
         <div class="stat-icon">
             <i data-lucide="user-check" size="28"></i>
@@ -87,27 +92,29 @@ require_once 'includes/sidebar.php';
             </a>
         <?php endif; ?>
     </div>
-    
+
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th>Nama Siswa</th>
-                    <th>NISN</th>
-                    <th>Umur</th>
-                    <th>Tanggal Lahir</th>
-                    <th>Alamat</th>
+                    <th>No. Induk</th>
+                    <th>Nama Lengkap</th>
+                    <th>Tempat Tanggal Lahir</th>
+                    <th>Anak Ke</th>
+                    <th>Jenis Kelamin</th>
                     <th>Orang Tua/Wali</th>
-                    <th>Status Hafalan</th>
+                    <th>Pendidikan</th>
+                    <th>Pekerjaan</th>
+                    <th>Alamat Orang Tua</th>
+                    <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+                    <th style="text-align: center; width: 120px;">Aksi</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($siswaList as $siswa): 
-                    $birthDate = new DateTime($siswa['tanggal_lahir']);
-                    $today = new DateTime('today');
-                    $age = $birthDate->diff($today)->y;
-                ?>
+                <?php foreach ($siswaList as $siswa): ?>
                 <tr>
+                    <td><?php echo htmlspecialchars($siswa['no_induk']); ?></td>
                     <td>
                         <div class="student-info">
                             <div class="avatar" style="background: transparent;">
@@ -116,20 +123,25 @@ require_once 'includes/sidebar.php';
                             <span><?php echo htmlspecialchars($siswa['nama']); ?></span>
                         </div>
                     </td>
-                    <td><?php echo htmlspecialchars($siswa['nisn']); ?></td>
-                    <td><?php echo $age; ?> Tahun</td>
-                    <td><?php echo date('d/m/Y', strtotime($siswa['tanggal_lahir'])); ?></td>
-                    <td><?php echo htmlspecialchars($siswa['alamat']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['tempat_lahir'] . ', ' . date('d/m/Y', strtotime($siswa['tanggal_lahir']))); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['anak_ke']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['jenis_kelamin']); ?></td>
                     <td><?php echo htmlspecialchars($siswa['nama_orang_tua']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['pendidikan_ortu']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['pekerjaan_ortu']); ?></td>
+                    <td><?php echo htmlspecialchars($siswa['alamat_ortu']); ?></td>
+                    <?php if ($_SESSION['role'] === 'admin_guru'): ?>
                     <td>
-                        <?php 
-                        $status = $siswa['status_hafalan'] ?? 'Belum Hafal';
-                        $badgeClass = 'badge-error';
-                        if ($status == 'Sudah Lancar') $badgeClass = 'badge-success';
-                        if ($status == 'Masih Menghafal') $badgeClass = 'badge-info';
-                        ?>
-                        <span class="badge <?php echo $badgeClass; ?>"><?php echo $status; ?></span>
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <a href="edit_siswa.php?id=<?php echo $siswa['id']; ?>" class="btn-icon" title="Edit" style="color: var(--primary-color); padding: 6px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; background: var(--primary-bg); transition: all 0.2s;">
+                                <i data-lucide="edit-2" size="16"></i>
+                            </a>
+                            <a href="hapus_siswa.php?id=<?php echo $siswa['id']; ?>" class="btn-icon" title="Hapus" onclick="return confirm('Yakin ingin menghapus data siswa ini?')" style="color: var(--error-text); padding: 6px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; background: var(--error-bg); transition: all 0.2s;">
+                                <i data-lucide="trash-2" size="16"></i>
+                            </a>
+                        </div>
                     </td>
+                    <?php endif; ?>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -156,6 +168,6 @@ require_once 'includes/sidebar.php';
     </div>
 </div>
 
-<?php 
+<?php
 require_once 'includes/footer.php'; // I'll create this next
 ?>
