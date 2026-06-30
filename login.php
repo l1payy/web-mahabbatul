@@ -4,7 +4,7 @@ session_start();
 
 // If already logged in, redirect to beranda
 if (isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    header("Location: beranda.php");
     exit();
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['nama'] = $user['nama'];
             $_SESSION['role'] = $user['role'];
-            header("Location: index.php");
+            header("Location: beranda.php");
             exit();
         } else {
             $error = 'Email atau password salah!';
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Mahabbatul Ummi</title>
+    <title>Login - Al-Falah System</title>
     <link rel="stylesheet" href="assets/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -47,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-box">
         <div class="login-header">
             <div class="logo-img" style="margin-bottom: 16px;">
-                <img src="assets/logo.png" alt="Mahabbatul Ummi Logo" style="height: 100px; width: 100px;">
+                <img src="assets/logo.png" alt="Al-Falah Logo" style="height: 80px; width: auto;">
             </div>
-            <h2>Mahabbatul Ummi</h2>
+            <h2>Al-Falah System</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">Silakan masuk ke akun Anda</p>
         </div>
 
@@ -62,14 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form action="" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="masukan email" required>
+                <input type="email" id="email" name="email" placeholder="admin@alfalah.com" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">
-                <span>Login</span>
+                <span>Masuk Sekarang</span>
+                <i data-lucide="arrow-right" size="18"></i>
             </button>
         </form>
     </div>

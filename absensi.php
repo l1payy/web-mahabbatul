@@ -60,10 +60,12 @@ $recapQuery = "
            SUM(CASE WHEN a.kehadiran = 'Hadir' THEN 1 ELSE 0 END) as total_hadir,
            SUM(CASE WHEN a.kehadiran = 'Sakit' THEN 1 ELSE 0 END) as total_sakit,
            SUM(CASE WHEN a.kehadiran = 'Izin' THEN 1 ELSE 0 END) as total_izin,
-           SUM(CASE WHEN a.kehadiran = 'Alpa' THEN 1 ELSE 0 END) as total_alpa
+           SUM(CASE WHEN a.kehadiran = 'Alpa' THEN 1 ELSE 0 END) as total_alpa,
+           h.status as status_hafalan
     FROM siswa s
     LEFT JOIN absensi a ON s.id = a.siswa_id AND MONTH(a.tanggal) = ? AND YEAR(a.tanggal) = ?
-    GROUP BY s.id, s.nama, s.no_induk
+    LEFT JOIN hafalan h ON s.id = h.siswa_id
+    GROUP BY s.id, s.nama, s.no_induk, h.status
 ";
 $stmtRecap = $pdo->prepare($recapQuery);
 $stmtRecap->execute([$recap_month, $recap_year]);
@@ -245,6 +247,7 @@ require_once 'includes/sidebar.php';
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Sakit</th>
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Izin</th>
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Alpa</th>
+                    <th style="border: 1px solid #000; padding: 12px; text-align: center;">Status Hafalan</th>
                 </tr>
             </thead>
             <tbody>
@@ -256,6 +259,7 @@ require_once 'includes/sidebar.php';
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo $recap['total_sakit']; ?></td>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo $recap['total_izin']; ?></td>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo $recap['total_alpa']; ?></td>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo htmlspecialchars($recap['status_hafalan'] ?? 'Belum Hafal'); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

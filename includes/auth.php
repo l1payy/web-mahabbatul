@@ -13,7 +13,7 @@ function checkRole($allowed_roles) {
         exit();
     }
     if (!in_array($_SESSION['role'], $allowed_roles)) {
-        header("Location: index.php?error=unauthorized");
+        header("Location: beranda.php?error=unauthorized");
         exit();
     }
 }

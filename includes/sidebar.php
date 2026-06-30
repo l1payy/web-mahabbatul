@@ -1,4 +1,3 @@
-<!-- Sidebar for Mahabbatul Ummi -->
 <aside class="sidebar">
     <div class="sidebar-header">
         <div class="logo-container">
@@ -6,7 +5,7 @@
                 <img src="assets/logo.png" alt="Logo" style="height: 40px; width: auto; border-radius: 4px;">
             </div>
             <div class="logo-text">
-                <h4>Mahabbatul Ummi</h4>
+                <h1>Al-Falah</h1>
                 <p>SISTEM MANAJEMEN SEKOLAH</p>
             </div>
         </div>
@@ -14,8 +13,8 @@
     
     <nav class="sidebar-nav">
         <ul>
-            <li class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">
-                <a href="index.php">
+            <li class="<?php echo ($current_page == 'beranda.php') ? 'active' : ''; ?>">
+                <a href="beranda.php">
                     <i data-lucide="layout-grid"></i>
                     <span>Beranda</span>
                 </a>
