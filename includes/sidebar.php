@@ -31,6 +31,12 @@
                     <span>Hafalan</span>
                 </a>
             </li>
+            <li class="<?php echo ($current_page == 'laporan.php') ? 'active' : ''; ?>">
+                <a href="laporan.php">
+                    <i data-lucide="file-text"></i>
+                    <span>Laporan</span>
+                </a>
+            </li>
         </ul>
     </nav>
 

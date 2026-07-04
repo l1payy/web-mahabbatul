@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['nama'] = $user['nama'];
             $_SESSION['role'] = $user['role'];
-            header("Location: beranda.php");
+            header("Location: llogin.php");
             exit();
         } else {
             $error = 'Email atau password salah!';
