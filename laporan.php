@@ -9,20 +9,18 @@ $current_page = 'laporan.php';
 $recap_month = $_GET['recap_month'] ?? date('m');
 $recap_year = $_GET['recap_year'] ?? date('Y');
 
-// Fetch Recap Data (Monthly) with creator info
+// Fetch Recap Data (Monthly)
 $recapQuery = "
     SELECT s.id, s.nama, s.no_induk,
            SUM(CASE WHEN a.kehadiran = 'Hadir' THEN 1 ELSE 0 END) as total_hadir,
            SUM(CASE WHEN a.kehadiran = 'Sakit' THEN 1 ELSE 0 END) as total_sakit,
            SUM(CASE WHEN a.kehadiran = 'Izin' THEN 1 ELSE 0 END) as total_izin,
            SUM(CASE WHEN a.kehadiran = 'Alpa' THEN 1 ELSE 0 END) as total_alpa,
-           h.status as status_hafalan,
-           u.nama as nama_guru_penginput
+           h.status as status_hafalan
     FROM siswa s
     LEFT JOIN absensi a ON s.id = a.siswa_id AND MONTH(a.tanggal) = ? AND YEAR(a.tanggal) = ?
     LEFT JOIN hafalan h ON s.id = h.siswa_id
-    LEFT JOIN users u ON a.created_by = u.id
-    GROUP BY s.id, s.nama, s.no_induk, h.status, u.nama
+    GROUP BY s.id, s.nama, s.no_induk, h.status
 ";
 $stmtRecap = $pdo->prepare($recapQuery);
 $stmtRecap->execute([$recap_month, $recap_year]);
@@ -40,7 +38,6 @@ $monthName = [
 
 // Get current date for print
 $tgl_cetak = date('d F Y');
-$dicetak_oleh = $_SESSION['nama'] ?? '';
 ?>
 
 <header class="page-header">
@@ -100,7 +97,6 @@ $dicetak_oleh = $_SESSION['nama'] ?? '';
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Izin</th>
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Alpa</th>
                     <th style="border: 1px solid #000; padding: 12px; text-align: center;">Status Hafalan</th>
-                    <th style="border: 1px solid #000; padding: 12px; text-align: center;">Guru Penginput</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,7 +109,6 @@ $dicetak_oleh = $_SESSION['nama'] ?? '';
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo $recap['total_izin']; ?></td>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo $recap['total_alpa']; ?></td>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo htmlspecialchars($recap['status_hafalan'] ?? 'Belum Hafal'); ?></td>
-                    <td style="border: 1px solid #000; padding: 12px; text-align: center;"><?php echo htmlspecialchars($recap['nama_guru_penginput'] ?? '-'); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -122,17 +117,9 @@ $dicetak_oleh = $_SESSION['nama'] ?? '';
 
     <div style="margin-top: 48px; display: flex; justify-content: space-between; flex-wrap: wrap;">
         <div style="text-align: center; width: 200px;">
-            <p style="font-weight: 600;">Nama Guru Penginput</p>
+            <p style="font-weight: 600;">Wali Kelas</p>
             <div style="margin-top: 80px; border-top: 1px solid #000; padding-top: 4px;">
                 <strong>( ................................ )</strong>
-            </div>
-        </div>
-        
-        <div style="text-align: center; width: 200px;">
-            <p style="font-weight: 600;">Tgl Cetak: <?php echo $tgl_cetak; ?></p>
-            <p style="margin-top: 8px; font-weight: 600;">Dicetak Oleh:</p>
-            <div style="margin-top: 60px; border-top: 1px solid #000; padding-top: 4px;">
-                <strong><?php echo htmlspecialchars($dicetak_oleh); ?></strong>
             </div>
         </div>
         

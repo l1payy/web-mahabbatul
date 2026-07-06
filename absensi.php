@@ -15,7 +15,7 @@ $tanggal_filter = $_GET['tanggal'] ?? date('Y-m-d');
 
 // Handle Save Absensi
 $message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'admin_guru') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'guru_wali_kelas') {
     $tanggal_simpan = $_POST['tanggal_absensi'] ?? date('Y-m-d');
     foreach ($_POST['kehadiran'] as $siswa_id => $status) {
         // Check if already exists for the selected date
@@ -71,7 +71,7 @@ require_once 'includes/sidebar.php';
             <?php if($search): ?><input type="hidden" name="search" value="<?php echo htmlspecialchars($search); ?>"><?php endif; ?>
         </form>
 
-        <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
             <button type="submit" form="absensiForm" class="btn btn-primary" style="margin-left: 8px;">
                 <i data-lucide="save"></i>
                 <span>Simpan</span>
@@ -92,15 +92,6 @@ require_once 'includes/sidebar.php';
         </div>
         <div class="stat-icon">
             <i data-lucide="users" size="28"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-info">
-            <p>Total Guru</p>
-            <h3>3</h3>
-        </div>
-        <div class="stat-icon">
-            <i data-lucide="user-check" size="28"></i>
         </div>
     </div>
     <div class="stat-card">

@@ -3,7 +3,7 @@ require_once 'includes/auth.php';
 require_once 'config/db.php';
 
 // Only admin_guru can delete students
-checkRole(['admin_guru']);
+checkRole(['guru_wali_kelas']);
 
 $siswa_id = $_GET['id'] ?? null;
 

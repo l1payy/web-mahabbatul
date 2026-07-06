@@ -64,15 +64,6 @@ require_once 'includes/sidebar.php';
     </div>
     <div class="stat-card">
         <div class="stat-info">
-            <p>Total Guru</p>
-            <h3>3</h3>
-        </div>
-        <div class="stat-icon">
-            <i data-lucide="user-check" size="28"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-info">
             <p>Total Siswa Lulus Hafalan</p>
             <h3><?php echo number_format($tuntasHafalan, 0, ',', '.'); ?></h3>
         </div>
@@ -85,7 +76,7 @@ require_once 'includes/sidebar.php';
 <div class="data-card">
     <div class="card-header">
         <h3>Data Siswa</h3>
-        <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
             <a href="tambah_siswa.php" class="btn btn-primary">
                 <i data-lucide="plus"></i>
                 <span>Tambah Siswa</span>
@@ -106,7 +97,7 @@ require_once 'includes/sidebar.php';
                     <th>Pendidikan</th>
                     <th>Pekerjaan</th>
                     <th>Alamat Orang Tua</th>
-                    <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+                    <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
                     <th style="text-align: center; width: 120px;">Aksi</th>
                     <?php endif; ?>
                 </tr>
@@ -130,7 +121,7 @@ require_once 'includes/sidebar.php';
                     <td><?php echo htmlspecialchars($siswa['pendidikan_ortu']); ?></td>
                     <td><?php echo htmlspecialchars($siswa['pekerjaan_ortu']); ?></td>
                     <td><?php echo htmlspecialchars($siswa['alamat_ortu']); ?></td>
-                    <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+                    <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
                     <td>
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <a href="edit_siswa.php?id=<?php echo $siswa['id']; ?>" class="btn-icon" title="Edit" style="color: var(--primary-color); padding: 6px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; background: var(--primary-bg); transition: all 0.2s;">

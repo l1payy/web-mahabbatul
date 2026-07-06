@@ -3,10 +3,10 @@ require_once 'includes/auth.php';
 require_once 'config/db.php';
 
 // Only admin_guru can add students
-checkRole(['admin_guru']);
+checkRole(['guru_wali_kelas']);
 
 $page_title = 'Tambah Siswa';
-$current_page = 'beranda.php';
+$current_page = 'index.php';
 $message = '';
 $error = '';
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare("INSERT INTO siswa (nama, nis, jenis_kelamin, kelas) VALUES (?, ?, ?, ?)");
             $stmt->execute([$nama, $nis, $jenis_kelamin, $kelas]);
-            header("Location: beranda.php?success=Siswa berhasil ditambahkan");
+            header("Location: index.php?success=Siswa berhasil ditambahkan");
             exit();
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
@@ -44,7 +44,7 @@ require_once 'includes/sidebar.php';
         <p>Lengkapi formulir di bawah ini untuk menambahkan data siswa.</p>
     </div>
     <div class="header-actions">
-        <a href="beranda.php" class="btn btn-outline">
+        <a href="index.php" class="btn btn-outline">
             <i data-lucide="arrow-left"></i>
             <span>Kembali</span>
         </a>

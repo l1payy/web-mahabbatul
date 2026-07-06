@@ -35,7 +35,7 @@ $status_filter = $_GET['status'] ?? '';
 
 // Handle Save Hafalan
 $message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'admin_guru') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'guru_wali_kelas') {
     foreach ($_POST['status_hafalan'] as $siswa_id => $status) {
         // Check if exists
         $stmt = $pdo->prepare("SELECT id FROM hafalan WHERE siswa_id = ?");
@@ -94,7 +94,7 @@ require_once 'includes/sidebar.php';
             <i data-lucide="calendar"></i>
             <span><?php echo date('l, d F Y'); ?></span>
         </div>
-        <?php if ($_SESSION['role'] === 'admin_guru'): ?>
+        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
             <button type="submit" form="hafalanForm" class="btn btn-primary">
                 <i data-lucide="save"></i>
                 <span>Simpan Hafalan</span>
@@ -111,15 +111,6 @@ require_once 'includes/sidebar.php';
         </div>
         <div class="stat-icon">
             <i data-lucide="users" size="28"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-info">
-            <p>Total Guru</p>
-            <h3>3</h3>
-        </div>
-        <div class="stat-icon">
-            <i data-lucide="graduation-cap" size="28"></i>
         </div>
     </div>
     <div class="stat-card">
@@ -216,7 +207,7 @@ function updateStats() {
                     new Intl.NumberFormat('id-ID').format(data.totalSiswa);
 
                 // Update Tuntas Hafalan
-                document.querySelector('.stats-container .stat-card:nth-child(3) h3').textContent =
+                document.querySelector('.stats-container .stat-card:nth-child(2) h3').textContent =
                     new Intl.NumberFormat('id-ID').format(data.tuntasHafalan);
             }
         })

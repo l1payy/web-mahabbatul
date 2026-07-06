@@ -3,7 +3,7 @@ require_once 'includes/auth.php';
 require_once 'config/db.php';
 
 // Only admin_guru can edit students
-checkRole(['admin_guru']);
+checkRole(['guru_wali_kelas']);
 
 $page_title = 'Edit Siswa';
 $current_page = 'index.php';
