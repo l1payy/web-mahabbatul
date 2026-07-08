@@ -29,6 +29,9 @@ $siswaList = $stmt->fetchAll();
 // Total pages for pagination
 $totalPages = ceil($totalSiswa / $limit);
 
+// Cek role (accept both for backward compatibility)
+$is_guru = ($_SESSION['role'] === 'guru_wali_kelas' || $_SESSION['role'] === 'admin_guru');
+
 require_once 'includes/header.php';
 require_once 'includes/sidebar.php';
 ?>
@@ -76,7 +79,7 @@ require_once 'includes/sidebar.php';
 <div class="data-card">
     <div class="card-header">
         <h3>Data Siswa</h3>
-        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
+        <?php if ($is_guru): ?>
             <a href="tambah_siswa.php" class="btn btn-primary">
                 <i data-lucide="plus"></i>
                 <span>Tambah Siswa</span>
@@ -97,7 +100,7 @@ require_once 'includes/sidebar.php';
                     <th>Pendidikan</th>
                     <th>Pekerjaan</th>
                     <th>Alamat Orang Tua</th>
-                    <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
+                    <?php if ($is_guru): ?>
                     <th style="text-align: center; width: 120px;">Aksi</th>
                     <?php endif; ?>
                 </tr>
@@ -121,7 +124,7 @@ require_once 'includes/sidebar.php';
                     <td><?php echo htmlspecialchars($siswa['pendidikan_ortu']); ?></td>
                     <td><?php echo htmlspecialchars($siswa['pekerjaan_ortu']); ?></td>
                     <td><?php echo htmlspecialchars($siswa['alamat_ortu']); ?></td>
-                    <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
+                    <?php if ($is_guru): ?>
                     <td>
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <a href="edit_siswa.php?id=<?php echo $siswa['id']; ?>" class="btn-icon" title="Edit" style="color: var(--primary-color); padding: 6px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; background: var(--primary-bg); transition: all 0.2s;">

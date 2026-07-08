@@ -9,13 +9,16 @@ $current_page = 'absensi.php';
 $totalSiswa = $pdo->query("SELECT COUNT(*) FROM siswa")->fetchColumn();
 $tuntasHafalan = $pdo->query("SELECT COUNT(*) FROM hafalan WHERE status = 'Sudah Lancar'")->fetchColumn();
 
+// Cek role (accept both for backward compatibility)
+$is_guru = ($_SESSION['role'] === 'guru_wali_kelas' || $_SESSION['role'] === 'admin_guru');
+
 // Filters
 $search = $_GET['search'] ?? '';
 $tanggal_filter = $_GET['tanggal'] ?? date('Y-m-d');
 
 // Handle Save Absensi
 $message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'guru_wali_kelas') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_guru) {
     $tanggal_simpan = $_POST['tanggal_absensi'] ?? date('Y-m-d');
     foreach ($_POST['kehadiran'] as $siswa_id => $status) {
         // Check if already exists for the selected date
@@ -71,7 +74,7 @@ require_once 'includes/sidebar.php';
             <?php if($search): ?><input type="hidden" name="search" value="<?php echo htmlspecialchars($search); ?>"><?php endif; ?>
         </form>
 
-        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
+        <?php if ($is_guru): ?>
             <button type="submit" form="absensiForm" class="btn btn-primary" style="margin-left: 8px;">
                 <i data-lucide="save"></i>
                 <span>Simpan</span>

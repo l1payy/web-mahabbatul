@@ -12,7 +12,11 @@ function checkRole($allowed_roles) {
         header("Location: login.php");
         exit();
     }
-    if (!in_array($_SESSION['role'], $allowed_roles)) {
+    
+    // Backward compatibility: treat 'admin_guru' as 'guru_wali_kelas'
+    $effective_role = ($_SESSION['role'] === 'admin_guru') ? 'guru_wali_kelas' : $_SESSION['role'];
+    
+    if (!in_array($effective_role, $allowed_roles)) {
         header("Location: index.php?error=unauthorized");
         exit();
     }

@@ -115,17 +115,19 @@ $tgl_cetak = date('d F Y');
         </table>
     </div>
 
-    <div style="margin-top: 48px; display: flex; justify-content: space-between; flex-wrap: wrap;">
+    <div style="margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
         <div style="text-align: center; width: 200px;">
-            <p style="font-weight: 600;">Wali Kelas</p>
+            <!-- Spacer kosong untuk sejajarkan dengan tanggal -->
+            <div style="height: 40px;"></div>
+            <p style="font-weight: 600; margin-bottom: 0;">Wali Kelas</p>
             <div style="margin-top: 80px; border-top: 1px solid #000; padding-top: 4px;">
                 <strong>( ................................ )</strong>
             </div>
         </div>
         
         <div style="text-align: center; width: 200px;">
-            <p>Medan, <?php echo $tgl_cetak; ?></p>
-            <p style="margin-top: 8px;">Kepala Sekolah</p>
+            <p style="margin-bottom: 16px;">Medan, <?php echo $tgl_cetak; ?></p>
+            <p style="margin-top: 0; font-weight: 600;">Kepala Sekolah</p>
             <div style="margin-top: 80px; border-top: 1px solid #000; padding-top: 4px;">
                 <strong>( ................................ )</strong>
             </div>

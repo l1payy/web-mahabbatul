@@ -25,6 +25,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'get_stats') {
 $page_title = 'Hafalan Siswa';
 $current_page = 'hafalan.php';
 
+// Cek role (accept both for backward compatibility)
+$is_guru = ($_SESSION['role'] === 'guru_wali_kelas' || $_SESSION['role'] === 'admin_guru');
+
 // Stats
 $totalSiswa = $pdo->query("SELECT COUNT(*) FROM siswa")->fetchColumn();
 $tuntasHafalan = $pdo->query("SELECT COUNT(*) FROM hafalan WHERE status = 'Sudah Lancar'")->fetchColumn();
@@ -35,7 +38,7 @@ $status_filter = $_GET['status'] ?? '';
 
 // Handle Save Hafalan
 $message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SESSION['role'] === 'guru_wali_kelas') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_guru) {
     foreach ($_POST['status_hafalan'] as $siswa_id => $status) {
         // Check if exists
         $stmt = $pdo->prepare("SELECT id FROM hafalan WHERE siswa_id = ?");
@@ -94,7 +97,7 @@ require_once 'includes/sidebar.php';
             <i data-lucide="calendar"></i>
             <span><?php echo date('l, d F Y'); ?></span>
         </div>
-        <?php if ($_SESSION['role'] === 'guru_wali_kelas'): ?>
+        <?php if ($is_guru): ?>
             <button type="submit" form="hafalanForm" class="btn btn-primary">
                 <i data-lucide="save"></i>
                 <span>Simpan Hafalan</span>
